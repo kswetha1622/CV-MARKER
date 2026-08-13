@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { 
   User, Settings, Bell, Palette, Globe, 
   Moon, Sun, Save, ArrowLeft, Shield, Smartphone,
-  Mail, Key
+  Mail, Key, Sparkles
 } from 'lucide-react'
 import { useTheme } from '../context/ThemeContext'
 import { useAuth } from '../context/AuthContext'
