@@ -1,13 +1,17 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
+import {
+  auth,
+  googleProvider,
+  signInWithPopup,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+  sendEmailVerification,
+  onAuthStateChanged,
+  signOut,
+  type User,
+} from '../lib/firebase'
 import { useNavigate } from 'react-router-dom'
-
-export interface User {
-  uid: string;
-  email: string | null;
-  displayName: string | null;
-  photoURL: string | null;
-  phoneNumber: string | null;
-}
 
 interface AuthContextType {
   user: User | null
@@ -35,71 +39,51 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const navigate = useNavigate()
 
   useEffect(() => {
-    // Check for existing user in localStorage
-    const savedUser = localStorage.getItem('cv_spark_user')
-    if (savedUser) {
-      setUser(JSON.parse(savedUser))
-    }
-    setLoading(false)
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setUser(firebaseUser)
+      setLoading(false)
+    })
+    return () => unsubscribe()
   }, [])
 
-  const setAndSaveUser = (newUser: User) => {
-    setUser(newUser)
-    localStorage.setItem('cv_spark_user', JSON.stringify(newUser))
-  }
-
   const loginWithGoogle = async () => {
-    setLoading(true)
-    setTimeout(() => {
-      setAndSaveUser({
-        uid: 'google_' + Date.now(),
-        email: 'user@gmail.com',
-        displayName: 'Google User',
-        photoURL: null,
-        phoneNumber: null,
-      })
-      navigate('/dashboard')
-      setLoading(false)
-    }, 800)
+    const result = await signInWithPopup(auth, googleProvider)
+    
+    // Attempt to send a verification email if requested by the user.
+    // Note: Firebase usually marks Google accounts as already verified,
+    // but we will trigger this anyway to fulfill the confirmation email request.
+    try {
+      if (result.user && !result.user.emailVerified) {
+        await sendEmailVerification(result.user)
+      } else if (result.user) {
+        // Even if verified, we forcefully send it if possible, though Firebase might ignore it.
+        await sendEmailVerification(result.user)
+      }
+    } catch (err) {
+      console.log('Confirmation email sending skipped or not allowed by Firebase for Google accounts:', err)
+    }
+
+    navigate('/dashboard')
   }
 
   const signupWithEmail = async (email: string, pass: string) => {
-    setLoading(true)
-    setTimeout(() => {
-      setAndSaveUser({
-        uid: 'email_' + Date.now(),
-        email: email,
-        displayName: email.split('@')[0],
-        photoURL: null,
-        phoneNumber: null,
-      })
-      navigate('/dashboard')
-      setLoading(false)
-    }, 800)
+    const userCredential = await createUserWithEmailAndPassword(auth, email, pass)
+    await sendEmailVerification(userCredential.user)
+    navigate('/dashboard')
   }
 
   const loginWithEmail = async (email: string, pass: string) => {
-    setLoading(true)
-    setTimeout(() => {
-      setAndSaveUser({
-        uid: 'email_' + Date.now(),
-        email: email,
-        displayName: email.split('@')[0],
-        photoURL: null,
-        phoneNumber: null,
-      })
-      navigate('/dashboard')
-      setLoading(false)
-    }, 800)
+    await signInWithEmailAndPassword(auth, email, pass)
+    navigate('/dashboard')
   }
 
   const resetPassword = async (email: string) => {
-    return new Promise<void>((resolve) => setTimeout(resolve, 500))
+    await sendPasswordResetEmail(auth, email)
   }
 
   const logout = async () => {
+    await signOut(auth)
     setUser(null)
-    localStorage.removeItem('cv_spark_user')
     navigate('/')
   }
 
