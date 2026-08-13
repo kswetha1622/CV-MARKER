@@ -38,6 +38,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
 
+  // Listen to Firebase auth state
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser)
@@ -46,41 +47,45 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => unsubscribe()
   }, [])
 
+  // Google Sign-In with popup
   const loginWithGoogle = async () => {
-    const result = await signInWithPopup(auth, googleProvider)
-    
-    // Attempt to send a verification email if requested by the user.
-    // Note: Firebase usually marks Google accounts as already verified,
-    // but we will trigger this anyway to fulfill the confirmation email request.
     try {
-      if (result.user && !result.user.emailVerified) {
-        await sendEmailVerification(result.user)
-      } else if (result.user) {
-        // Even if verified, we forcefully send it if possible, though Firebase might ignore it.
-        await sendEmailVerification(result.user)
+      const result = await signInWithPopup(auth, googleProvider)
+      if (result.user) {
+        // Send welcome verification email (Firebase may skip if already verified)
+        try {
+          await sendEmailVerification(result.user)
+        } catch {
+          // Silently ignore – Google accounts are pre-verified by Google
+        }
+        navigate('/dashboard')
       }
-    } catch (err) {
-      console.log('Confirmation email sending skipped or not allowed by Firebase for Google accounts:', err)
+    } catch (err: any) {
+      // Re-throw so the UI can display the error
+      throw err
     }
-
-    navigate('/dashboard')
   }
 
+  // Email/Password Sign-Up
   const signupWithEmail = async (email: string, pass: string) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, pass)
+    // Send verification email to the new user
     await sendEmailVerification(userCredential.user)
     navigate('/dashboard')
   }
 
+  // Email/Password Login
   const loginWithEmail = async (email: string, pass: string) => {
     await signInWithEmailAndPassword(auth, email, pass)
     navigate('/dashboard')
   }
 
+  // Forgot Password
   const resetPassword = async (email: string) => {
     await sendPasswordResetEmail(auth, email)
   }
 
+  // Logout
   const logout = async () => {
     await signOut(auth)
     setUser(null)

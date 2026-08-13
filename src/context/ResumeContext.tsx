@@ -5,9 +5,19 @@ import { db, doc, getDoc, setDoc } from '../lib/firebase'
 
 const defaultResumeData: ResumeData = {
   personalInfo: {
-    fullName: '', jobTitle: '', email: '', phone: '', address: '', linkedin: '', github: '', portfolio: '', profilePhoto: '', summary: '',
+    fullName: '', jobTitle: '', email: '', phone: '', address: '',
+    linkedin: '', github: '', portfolio: '', profilePhoto: '', summary: '',
   },
-  skills: [], education: [], experience: [], projects: [], certifications: [], achievements: [], languages: [], interests: [], references: [], codingProfiles: [],
+  skills: [],
+  education: [],
+  experience: [],
+  projects: [],
+  certifications: [],
+  achievements: [],
+  languages: [],
+  interests: [],
+  references: [],
+  codingProfiles: [],
 }
 
 interface ResumeContextType {
@@ -38,7 +48,7 @@ export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [isSaving, setIsSaving] = useState(false)
   const [initialLoadDone, setInitialLoadDone] = useState(false)
 
-  // Load from Firestore when user changes
+  // Load resume from Firestore when user logs in
   useEffect(() => {
     let isMounted = true
     const loadResume = async () => {
@@ -54,15 +64,25 @@ export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         const docSnap = await getDoc(docRef)
         if (isMounted) {
           if (docSnap.exists()) {
-            setResumeData(docSnap.data().resumeData as ResumeData)
-            setSelectedTemplate(docSnap.data().selectedTemplate || 'modern')
+            const data = docSnap.data()
+            setResumeData(data.resumeData as ResumeData || defaultResumeData)
+            setSelectedTemplate(data.selectedTemplate || 'modern')
           } else {
             setResumeData(defaultResumeData)
           }
           setInitialLoadDone(true)
         }
       } catch (err) {
-        console.error('Failed to load resume:', err)
+        console.error('Failed to load resume from Firestore:', err)
+        // Fallback to localStorage if Firestore fails
+        try {
+          const saved = localStorage.getItem(`resume_${user.uid}`)
+          if (saved && isMounted) {
+            const parsed = JSON.parse(saved)
+            setResumeData(parsed.resumeData || defaultResumeData)
+            setSelectedTemplate(parsed.selectedTemplate || 'modern')
+          }
+        } catch { /* ignore */ }
         if (isMounted) setInitialLoadDone(true)
       }
     }
@@ -70,27 +90,32 @@ export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return () => { isMounted = false }
   }, [user])
 
-  // Save to Firestore when data changes (debounced)
+  // Auto-save resume to Firestore (debounced 2s)
   useEffect(() => {
     if (!user || !initialLoadDone) return
 
-    const saveData = async () => {
+    const timer = setTimeout(async () => {
       setIsSaving(true)
       try {
         await setDoc(doc(db, 'resumes', user.uid), {
           resumeData,
           selectedTemplate,
-          updatedAt: new Date().toISOString()
+          updatedAt: new Date().toISOString(),
         })
+        // Also save to localStorage as backup
+        localStorage.setItem(`resume_${user.uid}`, JSON.stringify({ resumeData, selectedTemplate }))
       } catch (err) {
-        console.error('Failed to save resume:', err)
+        console.error('Failed to save resume to Firestore:', err)
+        // Fallback: save to localStorage
+        try {
+          localStorage.setItem(`resume_${user.uid}`, JSON.stringify({ resumeData, selectedTemplate }))
+        } catch { /* ignore */ }
       } finally {
         setIsSaving(false)
       }
-    }
+    }, 2000)
 
-    const timeoutId = setTimeout(saveData, 2000) // Auto-save after 2 seconds of inactivity
-    return () => clearTimeout(timeoutId)
+    return () => clearTimeout(timer)
   }, [resumeData, selectedTemplate, user, initialLoadDone])
 
   return (
