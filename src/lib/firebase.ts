@@ -2,7 +2,8 @@ import { initializeApp } from 'firebase/app'
 import {
   getAuth,
   GoogleAuthProvider,
-  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
@@ -32,7 +33,8 @@ export const googleProvider = new GoogleAuthProvider()
 googleProvider.setCustomParameters({ prompt: 'select_account' })
 
 export {
-  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,

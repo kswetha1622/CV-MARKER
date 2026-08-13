@@ -2,7 +2,8 @@ import React, { createContext, useContext, useEffect, useState } from 'react'
 import {
   auth,
   googleProvider,
-  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
@@ -43,12 +44,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(firebaseUser)
       setLoading(false)
     })
+    
+    // Check for redirect result on mount
+    getRedirectResult(auth).then((result) => {
+      if (result?.user) {
+        navigate('/dashboard')
+      }
+    }).catch(console.error)
+
     return () => unsubscribe()
-  }, [])
+  }, [navigate])
 
   const loginWithGoogle = async () => {
-    await signInWithPopup(auth, googleProvider)
-    navigate('/dashboard')
+    await signInWithRedirect(auth, googleProvider)
+    // The redirect happens automatically, navigation is handled in useEffect
   }
 
   const signupWithEmail = async (email: string, pass: string) => {
