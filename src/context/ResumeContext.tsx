@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import type { ResumeData, ActiveSection } from '../types'
 import { useAuth } from './AuthContext'
-import { db, doc, getDoc, setDoc } from '../lib/firebase'
 
 const defaultResumeData: ResumeData = {
   personalInfo: {
@@ -38,7 +37,7 @@ export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [isSaving, setIsSaving] = useState(false)
   const [initialLoadDone, setInitialLoadDone] = useState(false)
 
-  // Load from Firestore when user changes
+  // Load from LocalStorage when user changes
   useEffect(() => {
     let isMounted = true
     const loadResume = async () => {
@@ -50,12 +49,12 @@ export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         return
       }
       try {
-        const docRef = doc(db, 'resumes', user.uid)
-        const docSnap = await getDoc(docRef)
+        const savedData = localStorage.getItem(`cv_spark_resume_${user.uid}`)
         if (isMounted) {
-          if (docSnap.exists()) {
-            setResumeData(docSnap.data().resumeData as ResumeData)
-            setSelectedTemplate(docSnap.data().selectedTemplate || 'modern')
+          if (savedData) {
+            const parsed = JSON.parse(savedData)
+            setResumeData(parsed.resumeData as ResumeData || defaultResumeData)
+            setSelectedTemplate(parsed.selectedTemplate || 'modern')
           } else {
             setResumeData(defaultResumeData)
           }
@@ -70,18 +69,19 @@ export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return () => { isMounted = false }
   }, [user])
 
-  // Save to Firestore when data changes (debounced)
+  // Save to LocalStorage when data changes (debounced)
   useEffect(() => {
     if (!user || !initialLoadDone) return
 
     const saveData = async () => {
       setIsSaving(true)
       try {
-        await setDoc(doc(db, 'resumes', user.uid), {
+        const dataToSave = {
           resumeData,
           selectedTemplate,
           updatedAt: new Date().toISOString()
-        })
+        }
+        localStorage.setItem(`cv_spark_resume_${user.uid}`, JSON.stringify(dataToSave))
       } catch (err) {
         console.error('Failed to save resume:', err)
       } finally {
@@ -89,7 +89,7 @@ export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       }
     }
 
-    const timeoutId = setTimeout(saveData, 2000) // Auto-save after 2 seconds of inactivity
+    const timeoutId = setTimeout(saveData, 1000) // Auto-save after 1 second of inactivity
     return () => clearTimeout(timeoutId)
   }, [resumeData, selectedTemplate, user, initialLoadDone])
 

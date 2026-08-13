@@ -1,18 +1,13 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import {
-  auth,
-  googleProvider,
-  signInWithRedirect,
-  getRedirectResult,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  sendPasswordResetEmail,
-  sendEmailVerification,
-  onAuthStateChanged,
-  signOut,
-  type User,
-} from '../lib/firebase'
 import { useNavigate } from 'react-router-dom'
+
+export interface User {
+  uid: string;
+  email: string | null;
+  displayName: string | null;
+  photoURL: string | null;
+  phoneNumber: string | null;
+}
 
 interface AuthContextType {
   user: User | null
@@ -40,44 +35,71 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const navigate = useNavigate()
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      setUser(firebaseUser)
-      setLoading(false)
-    })
-    
-    // Check for redirect result on mount
-    getRedirectResult(auth).then((result) => {
-      if (result?.user) {
-        navigate('/dashboard')
-      }
-    }).catch(console.error)
+    // Check for existing user in localStorage
+    const savedUser = localStorage.getItem('cv_spark_user')
+    if (savedUser) {
+      setUser(JSON.parse(savedUser))
+    }
+    setLoading(false)
+  }, [])
 
-    return () => unsubscribe()
-  }, [navigate])
+  const setAndSaveUser = (newUser: User) => {
+    setUser(newUser)
+    localStorage.setItem('cv_spark_user', JSON.stringify(newUser))
+  }
 
   const loginWithGoogle = async () => {
-    await signInWithRedirect(auth, googleProvider)
-    // The redirect happens automatically, navigation is handled in useEffect
+    setLoading(true)
+    setTimeout(() => {
+      setAndSaveUser({
+        uid: 'google_' + Date.now(),
+        email: 'user@gmail.com',
+        displayName: 'Google User',
+        photoURL: null,
+        phoneNumber: null,
+      })
+      navigate('/dashboard')
+      setLoading(false)
+    }, 800)
   }
 
   const signupWithEmail = async (email: string, pass: string) => {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, pass)
-    await sendEmailVerification(userCredential.user)
-    navigate('/dashboard')
+    setLoading(true)
+    setTimeout(() => {
+      setAndSaveUser({
+        uid: 'email_' + Date.now(),
+        email: email,
+        displayName: email.split('@')[0],
+        photoURL: null,
+        phoneNumber: null,
+      })
+      navigate('/dashboard')
+      setLoading(false)
+    }, 800)
   }
 
   const loginWithEmail = async (email: string, pass: string) => {
-    await signInWithEmailAndPassword(auth, email, pass)
-    navigate('/dashboard')
+    setLoading(true)
+    setTimeout(() => {
+      setAndSaveUser({
+        uid: 'email_' + Date.now(),
+        email: email,
+        displayName: email.split('@')[0],
+        photoURL: null,
+        phoneNumber: null,
+      })
+      navigate('/dashboard')
+      setLoading(false)
+    }, 800)
   }
 
   const resetPassword = async (email: string) => {
-    await sendPasswordResetEmail(auth, email)
+    return new Promise<void>((resolve) => setTimeout(resolve, 500))
   }
 
   const logout = async () => {
-    await signOut(auth)
     setUser(null)
+    localStorage.removeItem('cv_spark_user')
     navigate('/')
   }
 
