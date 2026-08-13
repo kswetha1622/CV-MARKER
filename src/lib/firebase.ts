@@ -15,13 +15,13 @@ import {
 import { getFirestore, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyAaBBAzFtSFlhTdE2ZsAZ6zwSxyJ_bcq6c",
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "cv-spark-aa23e.firebaseapp.com",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "cv-spark-aa23e",
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "cv-spark-aa23e.firebasestorage.app",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "374632230959",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:374632230959:web:719111e5c5fc5bd7a116da",
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "G-0M8XV8MJF5",
 }
 
 const app = initializeApp(firebaseConfig)
