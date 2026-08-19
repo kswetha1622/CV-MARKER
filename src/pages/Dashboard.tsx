@@ -15,48 +15,53 @@ const Dashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'recent' | 'all'>('recent')
 
   const statsCards = [
-    { label: 'Total Resumes', value: '3', icon: FileText, color: 'from-blue-500 to-cyan-500', bg: 'bg-blue-50 dark:bg-blue-900/20', text: 'text-blue-500' },
-    { label: 'Profile Strength', value: '85%', icon: TrendingUp, color: 'from-emerald-500 to-teal-500', bg: 'bg-emerald-50 dark:bg-emerald-900/20', text: 'text-emerald-500' },
-    { label: 'Templates Used', value: '3', icon: LayoutTemplate, color: 'from-violet-500 to-purple-500', bg: 'bg-violet-50 dark:bg-violet-900/20', text: 'text-violet-500' },
+    { label: 'Total Resumes', value: '3', icon: FileText, bg: 'bg-[#E6F4EA] dark:bg-[#10B981]/20', text: 'text-[#137333] dark:text-[#10B981]' },
+    { label: 'Profile Strength', value: '85%', icon: TrendingUp, bg: 'bg-[#E6F4EA] dark:bg-[#10B981]/20', text: 'text-[#137333] dark:text-[#10B981]' },
+    { label: 'Templates Used', value: '3', icon: LayoutTemplate, bg: 'bg-[#E6F4EA] dark:bg-[#10B981]/20', text: 'text-[#137333] dark:text-[#10B981]' },
   ]
 
   const displayName = user?.displayName || user?.email?.split('@')[0] || 'User'
   const initials = displayName.substring(0, 2).toUpperCase()
+  const photoURL = user?.photoURL
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+    <div className="min-h-screen bg-[#F4F7F5] dark:bg-slate-950">
       <Navbar />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12 flex flex-col md:flex-row gap-8">
         
         {/* Sidebar */}
         <div className="w-full md:w-64 flex-shrink-0">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden sticky top-28">
-            <div className="p-6 text-center border-b border-slate-200 dark:border-slate-800">
-              <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-blue-500 to-violet-600 p-1 mb-4 shadow-lg shadow-blue-500/20">
-                <div className="w-full h-full rounded-full bg-white dark:bg-slate-800 border-2 border-white dark:border-slate-800 flex items-center justify-center text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-br from-blue-500 to-violet-600">
-                  {initials}
+          <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#E2E8F0] dark:border-slate-800 overflow-hidden sticky top-28">
+            <div className="p-6 text-center border-b border-[#E2E8F0] dark:border-slate-800">
+              <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-[#10B981] to-[#059669] p-1 mb-4 shadow-lg shadow-[#10B981]/20">
+                <div className="w-full h-full rounded-full bg-white dark:bg-slate-800 border-2 border-white dark:border-slate-800 flex items-center justify-center text-2xl font-bold text-[#059669] overflow-hidden">
+                  {photoURL ? (
+                    <img src={photoURL} alt="Profile" className="w-full h-full object-cover" />
+                  ) : (
+                    initials
+                  )}
                 </div>
               </div>
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white truncate">{displayName}</h3>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 truncate">{user?.email || user?.phoneNumber}</p>
+              <h3 className="text-lg font-bold text-[#0F172A] dark:text-white truncate">{displayName}</h3>
+              <p className="text-sm text-[#475569] dark:text-slate-400 mt-1 truncate">{user?.email || user?.phoneNumber}</p>
               
-              <div className="mt-4 flex items-center justify-center gap-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 py-1.5 px-3 rounded-full inline-flex">
+              <div className="mt-4 flex items-center justify-center gap-1.5 text-xs font-bold text-[#137333] dark:text-[#10B981] bg-[#E6F4EA] dark:bg-[#137333]/30 py-1.5 px-3 rounded-full inline-flex border border-[#D1E7DD] dark:border-transparent">
                 <CheckCircle2 className="w-4 h-4" />
                 Free Plan
               </div>
             </div>
             
             <div className="p-4 space-y-1">
-              <Link to="/dashboard" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium transition-colors">
+              <Link to="/dashboard" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#E6F4EA] dark:bg-[#137333]/30 text-[#137333] dark:text-[#10B981] font-bold transition-colors">
                 <LayoutTemplate className="w-5 h-5" />
                 My Resumes
               </Link>
-              <Link to="/settings" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors font-medium">
+              <Link to="/settings" className="flex items-center gap-3 px-4 py-3 rounded-xl text-[#475569] dark:text-slate-300 hover:bg-[#F4F7F5] dark:hover:bg-slate-800 hover:text-[#0F172A] dark:hover:text-white transition-colors font-bold">
                 <Settings className="w-5 h-5" />
                 Settings
               </Link>
-              <button onClick={logout} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors font-medium mt-4">
+              <button onClick={logout} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors font-bold mt-4">
                 <LogOut className="w-5 h-5" />
                 Log Out
               </button>
@@ -70,12 +75,12 @@ const Dashboard: React.FC = () => {
           {/* Welcome Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white font-['Outfit']">Welcome back, Alex! 👋</h1>
-              <p className="text-slate-500 dark:text-slate-400 mt-1">Here is what's happening with your resumes today.</p>
+              <h1 className="text-2xl md:text-3xl font-bold text-[#0F172A] dark:text-white font-['Outfit']">Welcome back, {displayName.split(' ')[0]}! 👋</h1>
+              <p className="text-[#475569] dark:text-slate-400 mt-1">Here is what's happening with your resumes today.</p>
             </div>
             <Link
               to="/builder"
-              className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-violet-600 text-white font-semibold shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:scale-105 transition-all duration-200"
+              className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#10B981] text-white font-bold shadow-[0_4px_14px_rgba(16,185,129,0.2)] hover:bg-[#059669] hover:shadow-[0_6px_20px_rgba(16,185,129,0.3)] hover:-translate-y-0.5 transition-all duration-200"
             >
               <Plus className="w-5 h-5" />
               Build New Resume
@@ -90,37 +95,37 @@ const Dashboard: React.FC = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
-                className="bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex items-center gap-4"
+                className="bg-white dark:bg-slate-900 p-5 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#E2E8F0] dark:border-slate-800 flex items-center gap-4"
               >
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${stat.bg} ${stat.text}`}>
                   <stat.icon className="w-6 h-6" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-slate-500 dark:text-slate-400">{stat.label}</p>
-                  <p className="text-2xl font-bold text-slate-900 dark:text-white">{stat.value}</p>
+                  <p className="text-sm font-bold text-[#475569] dark:text-slate-400">{stat.label}</p>
+                  <p className="text-2xl font-bold text-[#0F172A] dark:text-white">{stat.value}</p>
                 </div>
               </motion.div>
             ))}
           </div>
 
           {/* Resumes Section */}
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
-            <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white font-['Outfit'] flex items-center gap-2">
-                <FileText className="w-5 h-5 text-blue-500" />
+          <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#E2E8F0] dark:border-slate-800 overflow-hidden">
+            <div className="p-6 border-b border-[#E2E8F0] dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <h2 className="text-xl font-bold text-[#0F172A] dark:text-white font-['Outfit'] flex items-center gap-2">
+                <FileText className="w-5 h-5 text-[#10B981]" />
                 My Resumes
               </h2>
               
-              <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-lg">
+              <div className="flex bg-[#F4F7F5] dark:bg-slate-800 p-1 rounded-lg border border-[#E2E8F0] dark:border-transparent">
                 <button 
                   onClick={() => setActiveTab('recent')}
-                  className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${activeTab === 'recent' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'}`}
+                  className={`px-4 py-1.5 text-sm font-bold rounded-md transition-colors ${activeTab === 'recent' ? 'bg-white dark:bg-slate-700 text-[#0F172A] dark:text-white shadow-sm' : 'text-[#475569] dark:text-slate-400 hover:text-[#0F172A] dark:hover:text-slate-300'}`}
                 >
                   Recent
                 </button>
                 <button 
                   onClick={() => setActiveTab('all')}
-                  className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${activeTab === 'all' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'}`}
+                  className={`px-4 py-1.5 text-sm font-bold rounded-md transition-colors ${activeTab === 'all' ? 'bg-white dark:bg-slate-700 text-[#0F172A] dark:text-white shadow-sm' : 'text-[#475569] dark:text-slate-400 hover:text-[#0F172A] dark:hover:text-slate-300'}`}
                 >
                   All (3)
                 </button>
@@ -131,73 +136,80 @@ const Dashboard: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 
                 {/* Create New Card */}
-                <Link to="/templates" className="group h-64 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-2xl flex flex-col items-center justify-center gap-3 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 hover:border-blue-500 dark:hover:border-blue-500 transition-all cursor-pointer">
-                  <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Link to="/templates" className="group h-64 border-2 border-dashed border-[#CBD5E1] dark:border-slate-700 rounded-3xl flex flex-col items-center justify-center gap-3 bg-[#F4F7F5] dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:border-[#10B981] dark:hover:border-[#10B981] hover:shadow-md transition-all cursor-pointer">
+                  <div className="w-12 h-12 rounded-full bg-[#E6F4EA] dark:bg-[#10B981]/20 text-[#137333] dark:text-[#10B981] flex items-center justify-center group-hover:scale-110 transition-transform">
                     <Plus className="w-6 h-6" />
                   </div>
-                  <span className="font-semibold text-slate-600 dark:text-slate-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Create New</span>
+                  <span className="font-bold text-[#475569] dark:text-slate-300 group-hover:text-[#10B981] transition-colors">Create New</span>
                 </Link>
 
                 {/* Resume Cards */}
-                {mockResumes.map((resume, i) => (
-                  <motion.div 
-                    key={resume.id}
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: i * 0.1 }}
-                    className="group border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden bg-white dark:bg-slate-800 hover:shadow-xl transition-all hover:border-blue-200 dark:hover:border-blue-900/50 flex flex-col h-64 relative"
-                  >
-                    {/* Thumbnail Area */}
-                    <div className={`h-32 bg-gradient-to-br ${resume.color} p-4 relative overflow-hidden`}>
-                      <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm text-slate-700 text-xs font-bold px-2 py-1 rounded-md flex items-center gap-1 shadow-sm">
-                        <Sparkles className="w-3 h-3 text-amber-500" />
-                        {resume.score}%
-                      </div>
-                      
-                      {/* Fake resume lines for thumbnail */}
-                      <div className="mt-4 space-y-1.5 opacity-80">
-                        <div className="h-2 w-1/3 bg-white rounded-full"></div>
-                        <div className="h-1.5 w-1/4 bg-white/70 rounded-full"></div>
-                        <div className="pt-2 space-y-1">
-                          <div className="h-1.5 w-full bg-white/50 rounded-full"></div>
-                          <div className="h-1.5 w-5/6 bg-white/50 rounded-full"></div>
-                          <div className="h-1.5 w-4/5 bg-white/50 rounded-full"></div>
+                {mockResumes.map((resume, i) => {
+                  // Replace old purple gradients with sage/mint aesthetics
+                  const newColor = resume.color.includes('blue') || resume.color.includes('violet') 
+                    ? 'from-[#10B981] to-[#059669]' 
+                    : resume.color;
+
+                  return (
+                    <motion.div 
+                      key={resume.id}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: i * 0.1 }}
+                      className="group border border-[#E2E8F0] dark:border-slate-700 rounded-3xl overflow-hidden bg-white dark:bg-slate-800 hover:shadow-[0_15px_30px_rgba(0,0,0,0.08)] transition-all hover:border-[#10B981] dark:hover:border-[#10B981]/50 flex flex-col h-64 relative"
+                    >
+                      {/* Thumbnail Area */}
+                      <div className={`h-32 bg-gradient-to-br ${newColor} p-4 relative overflow-hidden`}>
+                        <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm text-[#0F172A] text-xs font-bold px-2.5 py-1 rounded-md flex items-center gap-1 shadow-sm">
+                          <Sparkles className="w-3 h-3 text-[#10B981]" />
+                          {resume.score}%
+                        </div>
+                        
+                        {/* Fake resume lines for thumbnail */}
+                        <div className="mt-4 space-y-2 opacity-90">
+                          <div className="h-2.5 w-1/3 bg-white rounded-full shadow-sm"></div>
+                          <div className="h-2 w-1/4 bg-white/80 rounded-full"></div>
+                          <div className="pt-2 space-y-1.5">
+                            <div className="h-1.5 w-full bg-white/60 rounded-full"></div>
+                            <div className="h-1.5 w-5/6 bg-white/60 rounded-full"></div>
+                            <div className="h-1.5 w-4/5 bg-white/60 rounded-full"></div>
+                          </div>
+                        </div>
+                        
+                        {/* Hover Overlay */}
+                        <div className="absolute inset-0 bg-[#0F172A]/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3 backdrop-blur-sm">
+                          <Link to={`/builder?id=${resume.id}`} className="w-12 h-12 bg-[#10B981] text-white rounded-full flex items-center justify-center hover:bg-[#059669] hover:scale-105 transition-all shadow-lg" title="Edit">
+                            <Edit className="w-5 h-5" />
+                          </Link>
+                          <button className="w-12 h-12 bg-white text-[#0F172A] rounded-full flex items-center justify-center hover:bg-[#F4F7F5] hover:scale-105 transition-all shadow-lg" title="Download PDF">
+                            <Download className="w-5 h-5" />
+                          </button>
                         </div>
                       </div>
                       
-                      {/* Hover Overlay */}
-                      <div className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                        <Link to={`/builder?id=${resume.id}`} className="w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors" title="Edit">
-                          <Edit className="w-4 h-4" />
-                        </Link>
-                        <button className="w-10 h-10 bg-white text-slate-700 rounded-full flex items-center justify-center hover:bg-slate-100 transition-colors" title="Download PDF">
-                          <Download className="w-4 h-4" />
-                        </button>
+                      {/* Details */}
+                      <div className="p-4 flex-1 flex flex-col justify-between bg-white dark:bg-slate-800 relative z-10">
+                        <div>
+                          <h3 className="font-bold text-[#0F172A] dark:text-white truncate" title={resume.name}>{resume.name}</h3>
+                          <p className="text-xs font-medium text-[#475569] dark:text-slate-400 mt-1 flex items-center gap-1.5">
+                            <LayoutTemplate className="w-3 h-3" />
+                            {resume.template}
+                          </p>
+                        </div>
+                        
+                        <div className="flex items-center justify-between mt-3 pt-3 border-t border-[#F1F5F9] dark:border-slate-700">
+                          <p className="text-xs font-medium text-[#94A3B8] dark:text-slate-500 flex items-center gap-1.5">
+                            <Clock className="w-3 h-3" />
+                            {resume.updated}
+                          </p>
+                          <button className="text-[#94A3B8] hover:text-red-500 hover:bg-red-50 p-1.5 rounded-lg transition-colors">
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                    
-                    {/* Details */}
-                    <div className="p-4 flex-1 flex flex-col justify-between bg-white dark:bg-slate-800 relative z-10">
-                      <div>
-                        <h3 className="font-semibold text-slate-900 dark:text-white truncate" title={resume.name}>{resume.name}</h3>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-1">
-                          <LayoutTemplate className="w-3 h-3" />
-                          {resume.template}
-                        </p>
-                      </div>
-                      
-                      <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-100 dark:border-slate-700">
-                        <p className="text-xs text-slate-400 dark:text-slate-500 flex items-center gap-1">
-                          <Clock className="w-3 h-3" />
-                          {resume.updated}
-                        </p>
-                        <button className="text-slate-400 hover:text-red-500 transition-colors">
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
+                    </motion.div>
+                  )
+                })}
               </div>
             </div>
           </div>
