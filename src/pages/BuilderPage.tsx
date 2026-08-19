@@ -56,27 +56,31 @@ const BuilderPage: React.FC = () => {
   const [showPreviewMobile, setShowPreviewMobile] = useState(false)
   const [isDownloading, setIsDownloading] = useState(false)
 
-  // DOWNLOAD IMAGE — directly saves a .png file to the user's downloads folder
+  // Detect mobile device
+  const isMobileDevice = () =>
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+
+  // DOWNLOAD IMAGE — works on both mobile and desktop
   const downloadImage = async () => {
     const element = document.getElementById('resume-preview-content')
     if (!element) {
-      alert('Resume not found.')
+      alert('Resume preview not found. Please switch to Preview mode first.')
       return
     }
 
     setIsDownloading(true)
 
-    // The resume is inside a scaled wrapper. Temporarily remove the scale
-    // so html2canvas captures it at full A4 resolution.
     const wrapper = element.parentElement as HTMLElement | null
     let savedTransform = ''
     let savedWidth = ''
     let savedHeight = ''
+    let savedClassName = ''
+
     if (wrapper) {
       savedTransform = wrapper.style.transform
       savedWidth = wrapper.style.width
       savedHeight = wrapper.style.height
-      // Remove all scaling classes and apply identity transform
+      savedClassName = wrapper.className
       wrapper.className = ''
       wrapper.style.transform = 'none'
       wrapper.style.width = '794px'
@@ -84,10 +88,8 @@ const BuilderPage: React.FC = () => {
     }
 
     try {
-      // Wait for layout to reflow at full scale
-      await new Promise(resolve => setTimeout(resolve, 200))
+      await new Promise(resolve => setTimeout(resolve, 300))
 
-      // Dynamically import html-to-image
       const htmlToImage = await import('html-to-image')
 
       const dataUrl = await htmlToImage.toPng(element, {
@@ -95,30 +97,43 @@ const BuilderPage: React.FC = () => {
         backgroundColor: '#ffffff',
         width: element.scrollWidth,
         height: element.scrollHeight,
-        style: {
-          transform: 'none',
-          boxShadow: 'none',
-        }
+        style: { transform: 'none', boxShadow: 'none' },
       })
 
-      // Trigger download
-      const link = document.createElement('a')
-      link.download = `${resumeData.personalInfo.fullName || 'Resume'}.png`
-      link.href = dataUrl
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
+      const fileName = `${resumeData.personalInfo.fullName || 'Resume'}.png`
+
+      if (isMobileDevice()) {
+        // Mobile: convert dataUrl to blob and open in new tab (works on iOS & Android)
+        const res = await fetch(dataUrl)
+        const blob = await res.blob()
+        const blobUrl = URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = blobUrl
+        link.download = fileName
+        link.target = '_blank'
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 5000)
+      } else {
+        // Desktop: standard anchor download
+        const link = document.createElement('a')
+        link.download = fileName
+        link.href = dataUrl
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+      }
 
     } catch (error: any) {
-      console.error('Download Image error:', error)
+      console.error('Download error:', error)
       alert('Failed to generate image. Please try again.')
     } finally {
-      // Restore the scaling wrapper
       if (wrapper) {
         wrapper.style.transform = savedTransform
         wrapper.style.width = savedWidth
         wrapper.style.height = savedHeight
-        wrapper.className = 'transform scale-[0.45] sm:scale-[0.55] md:scale-[0.6] lg:scale-[0.7] xl:scale-[0.8] 2xl:scale-[0.9] transition-transform duration-300 origin-top'
+        wrapper.className = savedClassName || 'transform scale-[0.45] sm:scale-[0.55] md:scale-[0.6] lg:scale-[0.7] xl:scale-[0.8] 2xl:scale-[0.9] transition-transform duration-300 origin-top'
       }
       setIsDownloading(false)
     }
@@ -214,11 +229,11 @@ const BuilderPage: React.FC = () => {
           
           <div className="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-1 hidden sm:block" />
 
-          {/* Download Actions */}
-          <div className="hidden md:flex items-center gap-2">
+          {/* Download Actions — visible on all screen sizes */}
+          <div className="flex items-center gap-2">
             <button 
               onClick={printResume}
-              className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors" 
+              className="hidden sm:flex w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors" 
               title="Print Resume"
             >
               <Printer className="w-4 h-4" />
@@ -226,10 +241,10 @@ const BuilderPage: React.FC = () => {
             <button 
               onClick={downloadImage}
               disabled={isDownloading}
-              className="flex items-center gap-2 px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium shadow-lg shadow-blue-500/20 transition-all text-sm disabled:opacity-70"
+              className="flex items-center gap-2 px-3 sm:px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium shadow-lg shadow-blue-500/20 transition-all text-sm disabled:opacity-70"
             >
               {isDownloading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-              {isDownloading ? 'Generating...' : 'Download Image'}
+              <span className="hidden sm:inline">{isDownloading ? 'Generating...' : 'Download'}</span>
             </button>
           </div>
 
@@ -302,6 +317,23 @@ const BuilderPage: React.FC = () => {
 
         {/* Right Area (Live Preview) */}
         <aside className={`absolute md:static inset-0 md:inset-auto md:w-[45%] lg:w-1/2 xl:w-[55%] bg-slate-200/50 dark:bg-slate-900 z-20 transition-transform duration-300 border-l border-slate-200 dark:border-slate-800 ${showPreviewMobile ? 'translate-x-0' : 'translate-x-full md:translate-x-0'}`}>
+          {/* Mobile download bar inside preview */}
+          <div className="md:hidden flex items-center justify-between px-4 py-2 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
+            <button
+              onClick={() => setShowPreviewMobile(false)}
+              className="flex items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400 font-medium"
+            >
+              <X className="w-4 h-4" /> Close Preview
+            </button>
+            <button
+              onClick={downloadImage}
+              disabled={isDownloading}
+              className="flex items-center gap-2 px-4 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm disabled:opacity-70 transition-all"
+            >
+              {isDownloading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+              {isDownloading ? 'Generating...' : 'Download'}
+            </button>
+          </div>
           <div className="h-full overflow-y-auto p-4 md:p-8 flex items-start justify-center">
             <LivePreview />
           </div>

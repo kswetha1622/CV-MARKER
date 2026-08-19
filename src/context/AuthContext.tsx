@@ -11,7 +11,15 @@ import {
   signOut,
   type User,
 } from '../lib/firebase'
+import {
+  getRedirectResult,
+  signInWithRedirect,
+} from 'firebase/auth'
 import { useNavigate } from 'react-router-dom'
+
+// Detect mobile browsers — popups are blocked on mobile, so we use redirect
+const isMobile = () =>
+  /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
 
 interface AuthContextType {
   user: User | null
@@ -38,54 +46,60 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
 
-  // Listen to Firebase auth state
   useEffect(() => {
+    // Listen to auth state changes
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser)
       setLoading(false)
     })
-    return () => unsubscribe()
-  }, [])
 
-  // Google Sign-In with popup
+    // Handle redirect result (for mobile Google sign-in)
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result?.user) {
+          // Send verification email silently (may be skipped for Google accounts)
+          sendEmailVerification(result.user).catch(() => {})
+          navigate('/dashboard')
+        }
+      })
+      .catch((err) => {
+        console.error('Redirect result error:', err)
+      })
+
+    return () => unsubscribe()
+  }, [navigate])
+
   const loginWithGoogle = async () => {
-    try {
+    if (isMobile()) {
+      // Mobile: use redirect (popup is blocked on mobile browsers)
+      await signInWithRedirect(auth, googleProvider)
+      // Navigation handled in useEffect via getRedirectResult
+    } else {
+      // Desktop: use popup for better UX
       const result = await signInWithPopup(auth, googleProvider)
       if (result.user) {
-        // Send welcome verification email (Firebase may skip if already verified)
-        try {
-          await sendEmailVerification(result.user)
-        } catch {
-          // Silently ignore – Google accounts are pre-verified by Google
-        }
+        // Send confirmation email silently
+        sendEmailVerification(result.user).catch(() => {})
         navigate('/dashboard')
       }
-    } catch (err: any) {
-      // Re-throw so the UI can display the error
-      throw err
     }
   }
 
-  // Email/Password Sign-Up
   const signupWithEmail = async (email: string, pass: string) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, pass)
-    // Send verification email to the new user
     await sendEmailVerification(userCredential.user)
     navigate('/dashboard')
   }
 
-  // Email/Password Login
   const loginWithEmail = async (email: string, pass: string) => {
     await signInWithEmailAndPassword(auth, email, pass)
     navigate('/dashboard')
   }
 
-  // Forgot Password
   const resetPassword = async (email: string) => {
     await sendPasswordResetEmail(auth, email)
   }
 
-  // Logout
   const logout = async () => {
     await signOut(auth)
     setUser(null)
