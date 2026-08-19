@@ -33,7 +33,7 @@ const LoginPage: React.FC = () => {
       const code = err?.code || ''
       if (code === 'auth/unauthorized-domain') {
         const domain = window.location.hostname
-        setError(`Domain not authorized in Firebase: "${domain}". Go to Firebase Console → Authentication → Settings → Authorized Domains → Add: ${domain}`)
+        setError(`⚠️ Add "${domain}" to Firebase: console.firebase.google.com → Project cv-spark-aa23e → Authentication → Settings → Authorized Domains → Add Domain → "${domain}"`)
       } else if (code === 'auth/operation-not-allowed') {
         setError('Google Sign-In is not enabled. Please contact support. (auth/operation-not-allowed)')
       } else if (code === 'auth/network-request-failed') {
