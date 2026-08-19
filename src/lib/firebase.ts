@@ -2,7 +2,6 @@ import { initializeApp } from 'firebase/app'
 import {
   getAuth,
   GoogleAuthProvider,
-  signInWithPopup,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
@@ -34,7 +33,6 @@ googleProvider.addScope('profile')
 googleProvider.setCustomParameters({ prompt: 'select_account' })
 
 export {
-  signInWithPopup,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,

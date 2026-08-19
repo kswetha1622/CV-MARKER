@@ -2,7 +2,6 @@ import React, { createContext, useContext, useEffect, useState } from 'react'
 import {
   auth,
   googleProvider,
-  signInWithPopup,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
@@ -12,14 +11,10 @@ import {
   type User,
 } from '../lib/firebase'
 import {
-  getRedirectResult,
   signInWithRedirect,
+  getRedirectResult,
 } from 'firebase/auth'
 import { useNavigate } from 'react-router-dom'
-
-// Detect mobile browsers — popups are blocked on mobile, so we use redirect
-const isMobile = () =>
-  /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
 
 interface AuthContextType {
   user: User | null
@@ -47,59 +42,54 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const navigate = useNavigate()
 
   useEffect(() => {
-    // Listen to auth state changes
+    // Check for Google redirect result first (after Google redirects back to app)
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result?.user) {
+          // Optionally send verification email (Firebase skips for Google accounts)
+          sendEmailVerification(result.user).catch(() => {})
+          navigate('/dashboard', { replace: true })
+        }
+      })
+      .catch((err) => {
+        console.error('Google redirect result error:', err)
+      })
+
+    // Listen to Firebase auth state changes
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser)
       setLoading(false)
     })
 
-    // Handle redirect result (for mobile Google sign-in)
-    getRedirectResult(auth)
-      .then((result) => {
-        if (result?.user) {
-          // Send verification email silently (may be skipped for Google accounts)
-          sendEmailVerification(result.user).catch(() => {})
-          navigate('/dashboard')
-        }
-      })
-      .catch((err) => {
-        console.error('Redirect result error:', err)
-      })
-
     return () => unsubscribe()
   }, [navigate])
 
+  // Google Sign-In — always uses redirect (works on ALL browsers, no popup blocking)
   const loginWithGoogle = async () => {
-    if (isMobile()) {
-      // Mobile: use redirect (popup is blocked on mobile browsers)
-      await signInWithRedirect(auth, googleProvider)
-      // Navigation handled in useEffect via getRedirectResult
-    } else {
-      // Desktop: use popup for better UX
-      const result = await signInWithPopup(auth, googleProvider)
-      if (result.user) {
-        // Send confirmation email silently
-        sendEmailVerification(result.user).catch(() => {})
-        navigate('/dashboard')
-      }
-    }
+    await signInWithRedirect(auth, googleProvider)
+    // After redirect, Google sends user back to the app.
+    // getRedirectResult() in useEffect above will handle navigation.
   }
 
+  // Email/Password Sign-Up
   const signupWithEmail = async (email: string, pass: string) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, pass)
     await sendEmailVerification(userCredential.user)
     navigate('/dashboard')
   }
 
+  // Email/Password Login
   const loginWithEmail = async (email: string, pass: string) => {
     await signInWithEmailAndPassword(auth, email, pass)
     navigate('/dashboard')
   }
 
+  // Forgot Password
   const resetPassword = async (email: string) => {
     await sendPasswordResetEmail(auth, email)
   }
 
+  // Logout
   const logout = async () => {
     await signOut(auth)
     setUser(null)
