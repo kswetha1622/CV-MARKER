@@ -42,7 +42,7 @@ const Navbar: React.FC = () => {
         transition={{ duration: 0.5, ease: 'easeOut' }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           scrolled || isDashboard
-            ? 'bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl shadow-lg shadow-black/5 border-b border-slate-200/50 dark:border-slate-700/50'
+            ? 'bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border-b border-[#E2E8F0] dark:border-slate-800'
             : 'bg-transparent'
         }`}
       >
@@ -50,10 +50,10 @@ const Navbar: React.FC = () => {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2 group">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform duration-200">
+              <div className="w-8 h-8 rounded-xl bg-[#10B981] flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-200">
                 <Sparkles className="w-4 h-4 text-white" />
               </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-blue-500 to-violet-600 bg-clip-text text-transparent font-['Outfit']">
+              <span className="text-xl font-bold text-[#0F172A] dark:text-white font-['Outfit']">
                 CV Spark
               </span>
             </Link>
@@ -77,17 +77,15 @@ const Navbar: React.FC = () => {
                       }
                     }
                   }}
-                  className={`relative px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 flex items-center gap-1.5 ${
+                  className={`relative px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-200 flex items-center gap-1.5 ${
                     location.pathname === link.href
-                      ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30'
-                      : scrolled || isDashboard
-                      ? 'text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20'
-                      : 'text-white/80 hover:text-white hover:bg-white/10'
+                      ? 'text-[#10B981] bg-[#E6F4EA] dark:bg-[#10B981]/20'
+                      : 'text-[#0F172A] dark:text-slate-300 hover:text-[#10B981] hover:bg-[#F4F7F5] dark:hover:bg-slate-800'
                   }`}
                 >
                   {link.label}
                   {link.badge && (
-                    <span className="text-[10px] font-semibold bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400 px-1.5 py-0.5 rounded-full">
+                    <span className="text-[10px] font-bold bg-[#E6F4EA] text-[#137333] px-2 py-0.5 rounded-full">
                       {link.badge}
                     </span>
                   )}
@@ -96,15 +94,15 @@ const Navbar: React.FC = () => {
             </div>
 
             {/* Right Actions */}
-            <div className="hidden lg:flex items-center gap-3">
+            <div className="hidden lg:flex items-center gap-4">
               {/* Dark Mode Toggle */}
               <button
                 onClick={toggleDarkMode}
                 aria-label="Toggle dark mode"
                 className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 ${
                   scrolled || isDashboard
-                    ? 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300'
-                    : 'bg-white/10 hover:bg-white/20 text-white'
+                    ? 'bg-[#F4F7F5] dark:bg-slate-800 hover:bg-[#E2E8F0] dark:hover:bg-slate-700 text-[#475569] dark:text-slate-300'
+                    : 'bg-black/5 hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/20 text-[#475569] dark:text-slate-300'
                 }`}
               >
                 {darkMode ? '☀️' : '🌙'}
@@ -112,17 +110,13 @@ const Navbar: React.FC = () => {
 
               <Link
                 to="/login"
-                className={`px-4 py-2 text-sm font-medium rounded-xl transition-all duration-200 ${
-                  scrolled || isDashboard
-                    ? 'text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400'
-                    : 'text-white/80 hover:text-white'
-                }`}
+                className="px-4 py-2 text-sm font-bold text-[#0F172A] dark:text-white hover:text-[#10B981] transition-all duration-200"
               >
                 Login
               </Link>
               <Link
                 to="/signup"
-                className="px-4 py-2 text-sm font-semibold rounded-xl bg-gradient-to-r from-blue-500 to-violet-600 text-white shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:scale-105 transition-all duration-200"
+                className="px-5 py-2.5 text-sm font-bold rounded-xl bg-[#0F172A] text-white shadow-md hover:bg-black hover:scale-105 transition-all duration-200 dark:bg-white dark:text-[#0F172A] dark:hover:bg-slate-200"
               >
                 Sign Up
               </Link>
@@ -132,11 +126,7 @@ const Navbar: React.FC = () => {
             <button
               onClick={() => setIsOpen(!isOpen)}
               aria-label="Toggle navigation menu"
-              className={`lg:hidden w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 ${
-                scrolled || isDashboard
-                  ? 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
-                  : 'bg-white/10 text-white'
-              }`}
+              className={`lg:hidden w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 bg-[#F4F7F5] dark:bg-slate-800 text-[#0F172A] dark:text-white`}
             >
               {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -152,7 +142,7 @@ const Navbar: React.FC = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm lg:hidden"
+              className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm lg:hidden"
               onClick={() => setIsOpen(false)}
             />
             <motion.div
@@ -162,18 +152,18 @@ const Navbar: React.FC = () => {
               transition={{ type: 'spring', damping: 30, stiffness: 300 }}
               className="fixed top-0 right-0 bottom-0 z-50 w-72 bg-white dark:bg-slate-900 shadow-2xl lg:hidden flex flex-col"
             >
-              <div className="flex items-center justify-between p-4 border-b border-slate-100 dark:border-slate-800">
+              <div className="flex items-center justify-between p-4 border-b border-[#E2E8F0] dark:border-slate-800">
                 <Link to="/" className="flex items-center gap-2" onClick={() => setIsOpen(false)}>
-                  <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-xl bg-[#10B981] flex items-center justify-center">
                     <Sparkles className="w-4 h-4 text-white" />
                   </div>
-                  <span className="text-xl font-bold bg-gradient-to-r from-blue-500 to-violet-600 bg-clip-text text-transparent font-['Outfit']">
+                  <span className="text-xl font-bold text-[#0F172A] dark:text-white font-['Outfit']">
                     CV Spark
                   </span>
                 </Link>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300"
+                  className="w-9 h-9 rounded-xl bg-[#F4F7F5] dark:bg-slate-800 flex items-center justify-center text-[#0F172A] dark:text-white"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -194,11 +184,11 @@ const Navbar: React.FC = () => {
                         document.getElementById(link.href.slice(2))?.scrollIntoView({ behavior: 'smooth' })
                       }
                     }}
-                    className="flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-200"
+                    className="flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-[#0F172A] dark:text-white hover:bg-[#E6F4EA] dark:hover:bg-[#10B981]/20 hover:text-[#10B981] transition-all duration-200"
                   >
                     {link.label}
                     {link.badge && (
-                      <span className="text-[10px] font-semibold bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full">
+                      <span className="text-[10px] font-bold bg-[#E6F4EA] text-[#137333] px-2 py-0.5 rounded-full">
                         {link.badge}
                       </span>
                     )}
@@ -206,13 +196,13 @@ const Navbar: React.FC = () => {
                 ))}
               </div>
 
-              <div className="p-4 border-t border-slate-100 dark:border-slate-800 space-y-2">
-                <div className="flex items-center justify-between px-4 py-2">
-                  <span className="text-sm text-slate-500 dark:text-slate-400">Dark Mode</span>
+              <div className="p-5 border-t border-[#E2E8F0] dark:border-slate-800 space-y-3">
+                <div className="flex items-center justify-between px-2 py-2 mb-2">
+                  <span className="text-sm font-bold text-[#0F172A] dark:text-white">Dark Mode</span>
                   <button
                     onClick={toggleDarkMode}
                     className={`w-12 h-6 rounded-full transition-all duration-300 relative ${
-                      darkMode ? 'bg-blue-500' : 'bg-slate-200'
+                      darkMode ? 'bg-[#10B981]' : 'bg-[#E2E8F0]'
                     }`}
                   >
                     <span
@@ -225,14 +215,14 @@ const Navbar: React.FC = () => {
                 <Link
                   to="/login"
                   onClick={() => setIsOpen(false)}
-                  className="block w-full text-center py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-medium text-slate-600 dark:text-slate-300 hover:border-blue-300 hover:text-blue-600 transition-all"
+                  className="block w-full text-center py-3.5 rounded-xl border-2 border-[#CBD5E1] text-sm font-bold text-[#0F172A] dark:text-white hover:bg-[#F1F5F9] dark:hover:bg-slate-800 transition-all"
                 >
                   Login
                 </Link>
                 <Link
                   to="/signup"
                   onClick={() => setIsOpen(false)}
-                  className="block w-full text-center py-3 rounded-xl bg-gradient-to-r from-blue-500 to-violet-600 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all"
+                  className="block w-full text-center py-3.5 rounded-xl bg-[#0F172A] dark:bg-white text-sm font-bold text-white dark:text-[#0F172A] shadow-md hover:scale-[1.02] transition-all"
                 >
                   Sign Up Free
                 </Link>
