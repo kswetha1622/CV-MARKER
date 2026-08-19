@@ -11,8 +11,10 @@ import {
   type User,
 } from '../lib/firebase'
 import {
+  signInWithPopup,
   signInWithRedirect,
   getRedirectResult,
+  browserPopupRedirectResolver,
 } from 'firebase/auth'
 import { useNavigate } from 'react-router-dom'
 
@@ -42,54 +44,62 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const navigate = useNavigate()
 
   useEffect(() => {
-    // Check for Google redirect result first (after Google redirects back to app)
+    // Handle redirect result when user comes back from Google
     getRedirectResult(auth)
       .then((result) => {
         if (result?.user) {
-          // Optionally send verification email (Firebase skips for Google accounts)
           sendEmailVerification(result.user).catch(() => {})
           navigate('/dashboard', { replace: true })
         }
       })
       .catch((err) => {
-        console.error('Google redirect result error:', err)
+        console.error('Redirect error:', err?.code, err?.message)
       })
 
-    // Listen to Firebase auth state changes
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser)
       setLoading(false)
     })
-
     return () => unsubscribe()
   }, [navigate])
 
-  // Google Sign-In — always uses redirect (works on ALL browsers, no popup blocking)
   const loginWithGoogle = async () => {
-    await signInWithRedirect(auth, googleProvider)
-    // After redirect, Google sends user back to the app.
-    // getRedirectResult() in useEffect above will handle navigation.
+    try {
+      // Try popup first — if blocked, fall back to redirect
+      const result = await signInWithPopup(auth, googleProvider, browserPopupRedirectResolver)
+      if (result?.user) {
+        sendEmailVerification(result.user).catch(() => {})
+        navigate('/dashboard', { replace: true })
+      }
+    } catch (err: any) {
+      if (
+        err?.code === 'auth/popup-blocked' ||
+        err?.code === 'auth/popup-closed-by-user' ||
+        err?.code === 'auth/cancelled-popup-request'
+      ) {
+        // Fallback to redirect when popup is blocked
+        await signInWithRedirect(auth, googleProvider, browserPopupRedirectResolver)
+      } else {
+        throw err
+      }
+    }
   }
 
-  // Email/Password Sign-Up
   const signupWithEmail = async (email: string, pass: string) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, pass)
     await sendEmailVerification(userCredential.user)
     navigate('/dashboard')
   }
 
-  // Email/Password Login
   const loginWithEmail = async (email: string, pass: string) => {
     await signInWithEmailAndPassword(auth, email, pass)
     navigate('/dashboard')
   }
 
-  // Forgot Password
   const resetPassword = async (email: string) => {
     await sendPasswordResetEmail(auth, email)
   }
 
-  // Logout
   const logout = async () => {
     await signOut(auth)
     setUser(null)
@@ -97,17 +107,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        loading,
-        loginWithGoogle,
-        signupWithEmail,
-        loginWithEmail,
-        resetPassword,
-        logout,
-      }}
-    >
+    <AuthContext.Provider value={{ user, loading, loginWithGoogle, signupWithEmail, loginWithEmail, resetPassword, logout }}>
       {children}
     </AuthContext.Provider>
   )

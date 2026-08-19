@@ -25,10 +25,24 @@ const LoginPage: React.FC = () => {
   const clearMessages = () => setError('')
 
   const handleGoogle = async () => {
-    clearMessages(); setLoading(true)
-    try { await loginWithGoogle() }
-    catch (err: any) { setError(err?.message || 'Google sign‑in failed.') }
-    finally { setLoading(false) }
+    clearMessages()
+    setLoading(true)
+    try {
+      await loginWithGoogle()
+    } catch (err: any) {
+      const code = err?.code || ''
+      if (code === 'auth/unauthorized-domain') {
+        setError('Domain not authorized. Please contact support. (auth/unauthorized-domain)')
+      } else if (code === 'auth/operation-not-allowed') {
+        setError('Google Sign-In is not enabled. Please contact support. (auth/operation-not-allowed)')
+      } else if (code === 'auth/network-request-failed') {
+        setError('Network error. Please check your internet connection and try again.')
+      } else {
+        setError(err?.message || `Google sign-in failed. (${code || 'unknown'})`)
+      }
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleEmailLogin = async (e: React.FormEvent) => {

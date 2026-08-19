@@ -13,6 +13,7 @@ import {
 } from 'firebase/auth'
 import { getFirestore, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
 
+// ✅ Firebase config — hardcoded so it always works on Vercel
 const firebaseConfig = {
   apiKey: "AIzaSyAaBBAzFtSFlhTdE2ZsAZ6zwSxyJ_bcq6c",
   authDomain: "cv-spark-aa23e.firebaseapp.com",
@@ -27,6 +28,7 @@ const app = initializeApp(firebaseConfig)
 export const auth: Auth = getAuth(app)
 export const db = getFirestore(app)
 
+// Google provider with account selection prompt
 export const googleProvider = new GoogleAuthProvider()
 googleProvider.addScope('email')
 googleProvider.addScope('profile')
