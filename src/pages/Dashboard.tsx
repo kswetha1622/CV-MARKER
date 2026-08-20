@@ -33,8 +33,8 @@ const Dashboard: React.FC = () => {
         
         {/* Sidebar */}
         <div className="w-full md:w-64 flex-shrink-0">
-          <div className="bg-[#E6F4EA] dark:bg-slate-900 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#E2E8F0] dark:border-slate-800 overflow-hidden sticky top-28">
-            <div className="p-6 text-center border-b border-[#E2E8F0] dark:border-slate-800">
+          <div className="bg-[#E6F4EA] dark:bg-[#064E3B] rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#E2E8F0] dark:border-[#065F46] overflow-hidden sticky top-28">
+            <div className="p-6 text-center border-b border-[#E2E8F0] dark:border-[#065F46]">
               <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-[#10B981] to-[#059669] p-1 mb-4 shadow-lg shadow-[#10B981]/20">
                 <div className="w-full h-full rounded-full bg-[#10B981] dark:bg-[#10B981] border-2 border-[#059669] flex items-center justify-center text-2xl font-bold text-white dark:text-white overflow-hidden">
                   {/* Ignoring Google's purple photoURL so the user always sees the green background */}
@@ -97,7 +97,7 @@ const Dashboard: React.FC = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
-                className="bg-[#E6F4EA] dark:bg-slate-900 p-5 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#E2E8F0] dark:border-slate-800 flex items-center gap-4"
+                className="bg-[#E6F4EA] dark:bg-[#064E3B] p-5 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#E2E8F0] dark:border-[#065F46] flex items-center gap-4"
               >
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${stat.bg} ${stat.text}`}>
                   <stat.icon className="w-6 h-6" />
@@ -111,14 +111,14 @@ const Dashboard: React.FC = () => {
           </div>
 
           {/* Resumes Section */}
-          <div className="bg-[#E6F4EA] dark:bg-slate-900 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#E2E8F0] dark:border-slate-800 overflow-hidden">
-            <div className="p-6 border-b border-[#E2E8F0] dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="bg-[#E6F4EA] dark:bg-[#064E3B] rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#E2E8F0] dark:border-[#065F46] overflow-hidden">
+            <div className="p-6 border-b border-[#E2E8F0] dark:border-[#065F46] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <h2 className="text-xl font-bold text-[#0F172A] dark:text-white font-['Outfit'] flex items-center gap-2">
                 <FileText className="w-5 h-5 text-[#10B981]" />
                 My Resumes
               </h2>
               
-              <div className="flex bg-[#F4F7F5] dark:bg-slate-800 p-1 rounded-lg border border-[#E2E8F0] dark:border-transparent">
+              <div className="flex bg-[#F4F7F5] dark:bg-[#065F46] p-1 rounded-lg border border-[#E2E8F0] dark:border-transparent">
                 <button 
                   onClick={() => setActiveTab('recent')}
                   className={`px-4 py-1.5 text-sm font-bold rounded-md transition-colors ${activeTab === 'recent' ? 'bg-white dark:bg-slate-700 text-[#0F172A] dark:text-white shadow-sm' : 'text-[#475569] dark:text-slate-400 hover:text-[#0F172A] dark:hover:text-slate-300'}`}
@@ -158,7 +158,7 @@ const Dashboard: React.FC = () => {
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: i * 0.1 }}
-                      className="group border border-[#E2E8F0] dark:border-slate-700 rounded-3xl overflow-hidden bg-[#F4F7F5] dark:bg-slate-800 hover:shadow-[0_15px_30px_rgba(0,0,0,0.08)] transition-all hover:border-[#10B981] dark:hover:border-[#10B981]/50 flex flex-col h-64 relative"
+                      className="group border border-[#E2E8F0] dark:border-[#065F46] rounded-3xl overflow-hidden bg-[#F4F7F5] dark:bg-[#064E3B] hover:shadow-[0_15px_30px_rgba(0,0,0,0.08)] transition-all hover:border-[#10B981] dark:hover:border-[#10B981]/50 flex flex-col h-64 relative"
                     >
                       {/* Thumbnail Area */}
                       <div className={`h-32 bg-gradient-to-br ${newColor} p-4 relative overflow-hidden`}>
@@ -190,7 +190,7 @@ const Dashboard: React.FC = () => {
                       </div>
                       
                       {/* Details */}
-                      <div className="p-4 flex-1 flex flex-col justify-between bg-transparent dark:bg-slate-800 relative z-10">
+                      <div className="p-4 flex-1 flex flex-col justify-between bg-transparent dark:bg-transparent relative z-10">
                         <div>
                           <h3 className="font-bold text-[#0F172A] dark:text-white truncate" title={resume.name}>{resume.name}</h3>
                           <p className="text-xs font-medium text-[#475569] dark:text-slate-400 mt-1 flex items-center gap-1.5">

@@ -59,7 +59,7 @@ const SettingsPage: React.FC = () => {
             Back to Dashboard
           </Link>
           
-          <div className="bg-[#E6F4EA] dark:bg-slate-900 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#E2E8F0] dark:border-slate-800 p-3 sticky top-28">
+          <div className="bg-[#E6F4EA] dark:bg-[#064E3B] rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#E2E8F0] dark:border-[#065F46] p-3 sticky top-28">
             <nav className="space-y-1">
               {tabs.map((tab) => (
                 <button
@@ -81,9 +81,9 @@ const SettingsPage: React.FC = () => {
 
         {/* Content Area */}
         <div className="flex-1">
-          <div className="bg-[#E6F4EA] dark:bg-slate-900 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#E2E8F0] dark:border-slate-800 overflow-hidden min-h-[600px] flex flex-col">
+          <div className="bg-[#E6F4EA] dark:bg-[#064E3B] rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#E2E8F0] dark:border-[#065F46] overflow-hidden min-h-[600px] flex flex-col">
             
-            <div className="p-6 md:p-8 border-b border-[#E2E8F0] dark:border-slate-800 flex items-center justify-between bg-[#F4F7F5] dark:bg-slate-900/50">
+            <div className="p-6 md:p-8 border-b border-[#E2E8F0] dark:border-[#065F46] flex items-center justify-between bg-[#F4F7F5] dark:bg-[#065F46]">
               <div>
                 <h1 className="text-2xl font-bold text-[#0F172A] dark:text-white font-['Outfit'] capitalize">
                   {tabs.find(t => t.id === activeTab)?.label} Settings
@@ -319,8 +319,8 @@ const SettingsPage: React.FC = () => {
             </div>
             
             {/* Action Bar */}
-            <div className="p-6 md:px-8 border-t border-[#E2E8F0] dark:border-slate-800 bg-transparent dark:bg-slate-900 flex items-center justify-end gap-4 mt-auto">
-              <button className="px-6 py-3 rounded-xl text-sm font-bold text-[#475569] dark:text-slate-400 hover:bg-[#F4F7F5] dark:hover:bg-slate-800 transition-colors">
+            <div className="p-6 md:px-8 border-t border-[#E2E8F0] dark:border-[#065F46] bg-transparent dark:bg-transparent flex items-center justify-end gap-4 mt-auto">
+              <button className="px-6 py-3 rounded-xl text-sm font-bold text-[#475569] dark:text-slate-200 hover:bg-[#F4F7F5] dark:hover:bg-[#065F46] transition-colors">
                 Cancel
               </button>
               <button 
