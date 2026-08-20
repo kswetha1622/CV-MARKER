@@ -35,7 +35,7 @@ const Dashboard: React.FC = () => {
           <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#E2E8F0] dark:border-slate-800 overflow-hidden sticky top-28">
             <div className="p-6 text-center border-b border-[#E2E8F0] dark:border-slate-800">
               <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-[#10B981] to-[#059669] p-1 mb-4 shadow-lg shadow-[#10B981]/20">
-                <div className="w-full h-full rounded-full bg-white dark:bg-slate-800 border-2 border-white dark:border-slate-800 flex items-center justify-center text-2xl font-bold text-[#059669] overflow-hidden">
+                <div className="w-full h-full rounded-full bg-[#E6F4EA] dark:bg-[#10B981]/20 border-2 border-[#10B981] flex items-center justify-center text-2xl font-bold text-[#059669] dark:text-[#10B981] overflow-hidden">
                   {photoURL ? (
                     <img src={photoURL} alt="Profile" className="w-full h-full object-cover" />
                   ) : (
