@@ -59,7 +59,7 @@ const SettingsPage: React.FC = () => {
             Back to Dashboard
           </Link>
           
-          <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#E2E8F0] dark:border-slate-800 p-3 sticky top-28">
+          <div className="bg-[#E6F4EA] dark:bg-slate-900 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#E2E8F0] dark:border-slate-800 p-3 sticky top-28">
             <nav className="space-y-1">
               {tabs.map((tab) => (
                 <button
@@ -81,7 +81,7 @@ const SettingsPage: React.FC = () => {
 
         {/* Content Area */}
         <div className="flex-1">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#E2E8F0] dark:border-slate-800 overflow-hidden min-h-[600px] flex flex-col">
+          <div className="bg-[#E6F4EA] dark:bg-slate-900 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#E2E8F0] dark:border-slate-800 overflow-hidden min-h-[600px] flex flex-col">
             
             <div className="p-6 md:p-8 border-b border-[#E2E8F0] dark:border-slate-800 flex items-center justify-between bg-[#F4F7F5] dark:bg-slate-900/50">
               <div>
@@ -127,7 +127,7 @@ const SettingsPage: React.FC = () => {
                         />
                         <button 
                           onClick={() => fileInputRef.current?.click()}
-                          className="px-5 py-2.5 bg-white dark:bg-slate-800 border-2 border-[#CBD5E1] dark:border-slate-700 text-[#0F172A] dark:text-slate-300 text-sm font-bold rounded-xl hover:bg-[#F1F5F9] dark:hover:bg-slate-700 transition-colors shadow-sm flex items-center gap-2"
+                          className="px-5 py-2.5 bg-[#F4F7F5] dark:bg-slate-800 border-2 border-[#CBD5E1] dark:border-slate-700 text-[#0F172A] dark:text-slate-300 text-sm font-bold rounded-xl hover:bg-white dark:hover:bg-slate-700 transition-colors shadow-sm flex items-center gap-2"
                         >
                           <Upload className="w-4 h-4" />
                           Upload Photo
@@ -319,7 +319,7 @@ const SettingsPage: React.FC = () => {
             </div>
             
             {/* Action Bar */}
-            <div className="p-6 md:px-8 border-t border-[#E2E8F0] dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-end gap-4 mt-auto">
+            <div className="p-6 md:px-8 border-t border-[#E2E8F0] dark:border-slate-800 bg-transparent dark:bg-slate-900 flex items-center justify-end gap-4 mt-auto">
               <button className="px-6 py-3 rounded-xl text-sm font-bold text-[#475569] dark:text-slate-400 hover:bg-[#F4F7F5] dark:hover:bg-slate-800 transition-colors">
                 Cancel
               </button>
