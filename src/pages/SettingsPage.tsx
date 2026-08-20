@@ -16,7 +16,9 @@ const SettingsPage: React.FC = () => {
   const { user } = useAuth()
   const [activeTab, setActiveTab] = useState<'profile' | 'theme' | 'notifications' | 'language' | 'security'>('profile')
   const [displayName, setDisplayName] = useState(user?.displayName || '')
-  const [localPhoto, setLocalPhoto] = useState(user?.photoURL || '')
+  // Ignore Google's photoURL, only keep if it's an uploaded Data URL
+  const initialPhoto = user?.photoURL?.startsWith('data:') ? user.photoURL : ''
+  const [localPhoto, setLocalPhoto] = useState(initialPhoto)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const tabs = [
@@ -107,7 +109,7 @@ const SettingsPage: React.FC = () => {
                   >
                     <div className="flex items-center gap-6">
                       <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#10B981] to-[#059669] p-1 shadow-lg shadow-[#10B981]/20">
-                        <div className="w-full h-full rounded-full bg-[#E6F4EA] dark:bg-[#10B981]/20 border-2 border-[#10B981] flex items-center justify-center text-3xl font-bold text-[#059669] dark:text-[#10B981] overflow-hidden">
+                        <div className="w-full h-full rounded-full bg-[#10B981] dark:bg-[#10B981] border-2 border-[#059669] flex items-center justify-center text-3xl font-bold text-white dark:text-white overflow-hidden">
                           {localPhoto ? (
                             <img src={localPhoto} alt="Profile" className="w-full h-full object-cover" />
                           ) : (
